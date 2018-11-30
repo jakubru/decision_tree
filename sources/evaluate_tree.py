@@ -1,4 +1,4 @@
-def evaluate_tree(root, dataset, prin=False):
+def evaluate_tree(root, dataset):
     hits = 0
     for element in dataset:
         node = root
@@ -8,8 +8,6 @@ def evaluate_tree(root, dataset, prin=False):
             else:
                 node = node.right
         result = node.position
-        if(prin):
-            print(result, element[len(element)-1])
         if(result == element[len(element)-1]):
             hits += 1
     return hits/(len(dataset))

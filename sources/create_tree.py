@@ -19,11 +19,11 @@ class Node:
 
 
 
-def create_tree(training_set,feature_bagging, div= 1):
+def create_tree(training_set,feature_bagging, bootstrap, div= 1):
     decision_tree = None
     node_queue = list()
     dataset_queue = list()
-    dataset_queue.insert(0, training_set)
+    dataset_queue.insert(0, tree_bagging(training_set, len(training_set)))
     while(len(dataset_queue) > 0):
         dataset = dataset_queue.pop(0)
         transposed_dataset = list(map(list, zip(*dataset)))
@@ -139,7 +139,7 @@ def tree_len(node):
         return tree_len(node.left) + tree_len(node.right) + 1
 
 def tree_bagging(training_set, b):
-    n = len(training_set)
-    bagged = list()
+    sample = random.sample(training_set, b)
+    return sample
 
 

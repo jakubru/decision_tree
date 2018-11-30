@@ -1,8 +1,9 @@
 from sources import evaluate_tree
 from sources.create_tree import tree_len
 
-def prune(root,node, prob_Y, validation_dataset, acc1, epsilon):
+def prune(root,node, prob_Y, validation_dataset, epsilon):
     if(node.left.isLeaf and node.right.isLeaf):
+        acc1 = evaluate_tree.evaluate_tree(root, validation_dataset)
         nodeLeft = node.left
         nodeRight = node.right
         nodeLabel = node.label
@@ -27,30 +28,20 @@ def prune(root,node, prob_Y, validation_dataset, acc1, epsilon):
         node.isLeaf = True
         acc2 = evaluate_tree.evaluate_tree(root, validation_dataset)
         if acc2 >= acc1 - epsilon:
-            return True
+            None
         else:
             node.left = nodeLeft
             node.right = nodeRight
             node.position = nodePosition
             node.label = nodeLabel
             node.isLeaf = False
-            return False
-    else:
-        return False
 
 
-def prune_tree_internal(root,tree, prob_Y, validation_dataset, acc1, epsilon):
-    pruned1 = False
-    pruned2 = False
+
+def prune_tree(root,tree, prob_Y, validation_dataset,acc1, epsilon = 0):
     if(not tree.left.isLeaf):
-        pruned1 = prune_tree_internal(root,tree.left, prob_Y, validation_dataset,acc1, epsilon)
+        prune_tree(root,tree.left, prob_Y, validation_dataset, epsilon)
     if(not tree.right.isLeaf):
-        pruned2 = prune_tree_internal(root,tree.right, prob_Y, validation_dataset,acc1, epsilon)
-    return pruned1 or pruned2 or prune(root,tree, prob_Y, validation_dataset,acc1, epsilon)
+        prune_tree(root,tree.right, prob_Y, validation_dataset, epsilon)
+    prune(root,tree, prob_Y, validation_dataset, epsilon)
 
-
-def prune_tree(root,tree, prob_Y, validation_dataset, epsilon = 0):
-    wasChanged = True
-    acc1 = evaluate_tree.evaluate_tree(root, validation_dataset)
-    while(wasChanged):
-        wasChanged = prune_tree_internal(root, tree, prob_Y, validation_dataset,acc1, epsilon)
