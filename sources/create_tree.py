@@ -19,7 +19,7 @@ class Node:
 
 
 
-def create_tree(training_set,feature_bagging, bootstrap, div= 1):
+def create_tree(training_set,feature_bagging):
     decision_tree = None
     node_queue = list()
     dataset_queue = list()
@@ -45,9 +45,7 @@ def create_tree(training_set,feature_bagging, bootstrap, div= 1):
                  prob_var_len = len(prob_var)
                  for j in range(prob_var_len):
                     conditional_entropies.insert(j,compute_conditional_entropy(prob_arr[prob_arr_len], dataset, lambda el: el[pos] == prob_var[j][0]))
-                 x = (prob_var_len - 1) // div + (prob_var_len - 1) % div
-                 sample = random.sample(range(0, prob_var_len - 1), x)
-                 for j in sample:
+                 for j in range(0, prob_var_len-1):
                     prob_X_less_eq = prob_var[:j+1]
                     prob_X_greater = prob_var[j+1:]
                     sum_x_less_eq = sum([x[1] for x in prob_X_less_eq])
@@ -63,7 +61,7 @@ def create_tree(training_set,feature_bagging, bootstrap, div= 1):
                         H_Y_X_greater += conditional_entropies[tmp+k]*prob_X_greater[k]
                     H_Y_Xt = sum_x_less_eq*H_Y_X_less_eq + sum_x_qreater*H_Y_X_greater
                     tmp_mutual_inf = compute_mutual_inf(H_Y, H_Y_Xt)
-                    if(tmp_mutual_inf > mutual_inf):
+                    if(tmp_mutual_inf >= mutual_inf):
                         mutual_inf = tmp_mutual_inf
                         label = i
                         position = prob_var[j][0]
@@ -128,6 +126,12 @@ def compute_conditional_entropy(Y, training_set, condition):
 
 
 def split_dataset(position, value, dataset):
+    if position == None and value == None:
+        for i in range (len(dataset[0])):
+            if dataset[0][i] != dataset[1][i]:
+                position = i
+                value = min(dataset[0][i], dataset[1][i])
+                break
     set_1 = list(filter(lambda x: x[position] <= value, dataset))
     set_2 = list(filter(lambda x: x[position] > value, dataset))
     return (set_1, set_2)

@@ -13,7 +13,7 @@ def evaluate_random_forest(test_set, forest):
                 else:
                     node = node.right
             results.insert(0, node.position)
-        result = mode(results)
+        result = max(set(results), key=results.count)
         if(result == element[len(element)-1]):
             hits += 1
     return hits/len(test_set)
